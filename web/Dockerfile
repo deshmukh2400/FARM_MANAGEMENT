@@ -5,11 +5,20 @@ FROM node:18-alpine AS base
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies and tools
 RUN apk add --no-cache \
     curl \
+    git \
+    python3 \
+    make \
+    g++ \
     && addgroup -g 1001 -S nodejs \
     && adduser -S nodejs -u 1001
+
+# Set npm configuration for better reliability
+RUN npm config set fetch-retry-mintimeout 20000 \
+    && npm config set fetch-retry-maxtimeout 120000 \
+    && npm config set fetch-retries 3
 
 # Copy package files
 COPY package*.json ./
@@ -17,8 +26,9 @@ COPY package*.json ./
 # Stage 2: Install dependencies
 FROM base AS dependencies
 
-# Install dependencies
-RUN npm ci --silent && npm cache clean --force
+# Install dependencies with legacy peer deps to handle conflicts
+RUN npm install --legacy-peer-deps --silent --no-audit --no-fund \
+    && npm cache clean --force
 
 # Stage 3: Development image
 FROM base AS development
@@ -58,6 +68,7 @@ ENV REACT_APP_VERSION=$REACT_APP_VERSION
 ENV NODE_ENV=production
 ENV GENERATE_SOURCEMAP=false
 ENV INLINE_RUNTIME_CHUNK=false
+ENV CI=true
 
 # Copy dependencies
 COPY --from=dependencies /app/node_modules ./node_modules
@@ -65,8 +76,8 @@ COPY --from=dependencies /app/node_modules ./node_modules
 # Copy source code
 COPY . .
 
-# Build the application
-RUN npm run build
+# Build the application with increased memory
+RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build
 
 # Stage 5: Production image with Nginx
 FROM nginx:alpine AS production
@@ -82,9 +93,6 @@ COPY --from=build /app/build /usr/share/nginx/html
 
 # Copy custom nginx configuration
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
-
-# Copy SSL certificates (if available)
-# COPY docker/ssl/ /etc/nginx/ssl/
 
 # Create nginx user and set permissions
 RUN addgroup -g 1001 -S nginx-user \

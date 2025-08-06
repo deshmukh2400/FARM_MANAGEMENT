@@ -10,9 +10,9 @@ services:
     container_name: farm_mongodb
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-farmpass123}
-      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME:-farmmanagement}
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: farmpass123
+      MONGO_INITDB_DATABASE: farmmanagement
     volumes:
       - mongodb_data:/data/db
       - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -32,7 +32,7 @@ services:
     image: redis:7-alpine
     container_name: farm_redis
     restart: unless-stopped
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redispass123}
+    command: redis-server --appendonly yes --requirepass redispass123
     volumes:
       - redis_data:/data
     ports:
@@ -56,23 +56,13 @@ services:
     environment:
       NODE_ENV: production
       PORT: 5000
-      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-farmpass123}@mongodb:27017/${MONGO_DB_NAME:-farmmanagement}?authSource=admin
-      REDIS_URL: redis://:${REDIS_PASSWORD:-redispass123}@redis:6379
-      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-this-in-production}
-      JWT_EXPIRE: ${JWT_EXPIRE:-7d}
-      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
-      CLIENT_URL: ${CLIENT_URL:-http://localhost:3000}
-      MOBILE_URL: ${MOBILE_URL:-http://localhost:19006}
-      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
-      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
-      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
-      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
-      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL:-noreply@farmmanager.com}
-      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-farm-management-uploads}
-      AWS_REGION: ${AWS_REGION:-us-east-1}
+      MONGODB_URI: mongodb://admin:farmpass123@mongodb:27017/farmmanagement?authSource=admin
+      REDIS_URL: redis://:redispass123@redis:6379
+      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production-min-32-chars
+      JWT_EXPIRE: 7d
+      BCRYPT_ROUNDS: 12
+      CLIENT_URL: http://localhost:3000
+      MOBILE_URL: http://localhost:19006
     volumes:
       - ./uploads:/app/uploads
       - ./logs:/app/logs
@@ -99,9 +89,9 @@ services:
       dockerfile: Dockerfile
       target: production
       args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:5000}
+        REACT_APP_API_URL: http://localhost:5000
         REACT_APP_ENVIRONMENT: production
-        REACT_APP_VERSION: ${APP_VERSION:-1.0.0}
+        REACT_APP_VERSION: 1.0.0
     container_name: farm_web
     restart: unless-stopped
     ports:
