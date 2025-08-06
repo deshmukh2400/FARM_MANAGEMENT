@@ -1,0 +1,303 @@
+version: '3.8'
+
+# Production override for Farm Management System
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+
+services:
+  # Production MongoDB with security hardening
+  mongodb:
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+    volumes:
+      - mongodb_prod_data:/data/db
+      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./logs/mongodb:/var/log/mongodb
+    # Remove port exposure for security
+    ports: []
+    command: mongod --auth --bind_ip_all --logpath /var/log/mongodb/mongod.log
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Production Redis with security
+  redis:
+    restart: always
+    command: >
+      redis-server 
+      --appendonly yes 
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    volumes:
+      - redis_prod_data:/data
+      - ./logs/redis:/var/log/redis
+    # Remove port exposure for security
+    ports: []
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Production Backend with optimizations
+  backend:
+    restart: always
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      MONGODB_URI: ${MONGODB_URI}
+      REDIS_URL: ${REDIS_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRE: ${JWT_EXPIRE}
+      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS}
+      CLIENT_URL: ${CLIENT_URL}
+      MOBILE_URL: ${MOBILE_URL}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL}
+      OPENWEATHER_API_KEY: ${OPENWEATHER_API_KEY}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_REGION: ${AWS_REGION}
+      LOG_LEVEL: info
+      SENTRY_DSN: ${SENTRY_DSN}
+    volumes:
+      - ./uploads:/app/uploads:ro
+      - ./logs/backend:/app/logs
+    # Remove port exposure - only accessible via nginx
+    ports: []
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Production Web with nginx optimization
+  web:
+    restart: always
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      target: production
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL}
+        REACT_APP_ENVIRONMENT: production
+        REACT_APP_VERSION: ${APP_VERSION}
+    # Remove port exposure - only accessible via nginx
+    ports: []
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.25'
+        reservations:
+          memory: 64M
+          cpus: '0.1'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # Production Nginx with SSL and security headers
+  nginx:
+    restart: always
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+      - ./uploads:/var/www/uploads:ro
+    environment:
+      NGINX_HOST: ${DOMAIN:-localhost}
+      NGINX_PORT: 80
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.25'
+        reservations:
+          memory: 64M
+          cpus: '0.1'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  # Production file service with S3 integration
+  file_service:
+    restart: always
+    build:
+      context: ./docker/file-service
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      UPLOAD_PATH: /uploads
+      MAX_FILE_SIZE: ${MAX_FILE_SIZE}
+      ALLOWED_TYPES: ${ALLOWED_FILE_TYPES}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_REGION: ${AWS_REGION}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    volumes:
+      - ./uploads:/uploads
+    # Remove port exposure - only accessible via nginx
+    ports: []
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Log aggregation service
+  fluentd:
+    image: fluent/fluentd:v1.16-1
+    container_name: farm_fluentd
+    restart: always
+    volumes:
+      - ./docker/fluentd/fluent.conf:/fluentd/etc/fluent.conf:ro
+      - ./logs:/var/log/farm
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - farm_network
+    profiles:
+      - logging
+
+  # Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: farm_prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - farm_network
+    profiles:
+      - monitoring
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    container_name: farm_grafana
+    restart: always
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: false
+    networks:
+      - farm_network
+    depends_on:
+      - prometheus
+    profiles:
+      - monitoring
+
+  # Database backup service
+  backup:
+    image: mongo:6.0
+    container_name: farm_backup
+    restart: "no"
+    volumes:
+      - ./backups:/backups
+      - ./docker/backup/backup.sh:/backup.sh:ro
+    environment:
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      MONGO_DB: ${MONGO_DB_NAME}
+      MONGO_USER: ${MONGO_ROOT_USERNAME}
+      MONGO_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      BACKUP_PATH: /backups
+      AWS_S3_BUCKET: ${BACKUP_S3_BUCKET}
+      AWS_REGION: ${AWS_REGION}
+    networks:
+      - farm_network
+    depends_on:
+      - mongodb
+    profiles:
+      - backup
+    command: /backup.sh
+
+volumes:
+  mongodb_prod_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/lib/farm/mongodb
+  redis_prod_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/lib/farm/redis
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  farm_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16 

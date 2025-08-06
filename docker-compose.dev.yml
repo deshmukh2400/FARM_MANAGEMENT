@@ -1,0 +1,164 @@
+version: '3.8'
+
+# Development override for Farm Management System
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  # Development MongoDB with exposed ports
+  mongodb:
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_dev_data:/data/db
+      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: devpass123
+      MONGO_INITDB_DATABASE: farmmanagement_dev
+
+  # Development Redis
+  redis:
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass devredispass
+    volumes:
+      - redis_dev_data:/data
+
+  # Development Backend with hot reload
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      MONGODB_URI: mongodb://admin:devpass123@mongodb:27017/farmmanagement_dev?authSource=admin
+      REDIS_URL: redis://:devredispass@redis:6379
+      JWT_SECRET: dev-jwt-secret-key-for-development-only
+      JWT_EXPIRE: 7d
+      CLIENT_URL: http://localhost:3000
+      MOBILE_URL: http://localhost:19006
+      LOG_LEVEL: debug
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./logs:/app/logs
+    ports:
+      - "5000:5000"
+      - "9229:9229" # Node.js debugger port
+    command: npm run dev
+    depends_on:
+      - mongodb
+      - redis
+
+  # Development Web with hot reload
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      target: development
+    environment:
+      NODE_ENV: development
+      REACT_APP_API_URL: http://localhost:5000
+      REACT_APP_ENVIRONMENT: development
+      WATCHPACK_POLLING: true
+      FAST_REFRESH: true
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    command: npm start
+    stdin_open: true
+    tty: true
+
+  # Development tools container
+  dev-tools:
+    image: node:18-alpine
+    container_name: farm_dev_tools
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - /workspace/node_modules
+    networks:
+      - farm_network
+    profiles:
+      - tools
+    command: tail -f /dev/null
+
+  # Database administration tool
+  mongo-express:
+    image: mongo-express:latest
+    container_name: farm_mongo_express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: devpass123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:devpass123@mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    networks:
+      - farm_network
+    depends_on:
+      - mongodb
+    profiles:
+      - tools
+
+  # Redis administration tool
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: farm_redis_commander
+    hostname: redis-commander
+    ports:
+      - "8082:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:devredispass
+      HTTP_USER: admin
+      HTTP_PASSWORD: admin
+    networks:
+      - farm_network
+    depends_on:
+      - redis
+    profiles:
+      - tools
+
+  # Email testing tool (MailHog)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: farm_mailhog
+    ports:
+      - "1025:1025" # SMTP server
+      - "8025:8025" # Web UI
+    networks:
+      - farm_network
+    profiles:
+      - tools
+
+  # File browser for uploads
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: farm_filebrowser
+    ports:
+      - "8080:80"
+    volumes:
+      - ./uploads:/srv
+      - ./docker/filebrowser.db:/database/filebrowser.db
+    environment:
+      FB_DATABASE: /database/filebrowser.db
+    networks:
+      - farm_network
+    profiles:
+      - tools
+
+volumes:
+  mongodb_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+
+networks:
+  farm_network:
+    driver: bridge 
