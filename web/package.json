@@ -50,7 +50,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && npm run optimize",
+    "build": "react-scripts build",
+    "build:prod": "react-scripts build && npm run optimize",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "optimize": "npm run optimize:images && npm run optimize:bundle",

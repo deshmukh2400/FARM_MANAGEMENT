@@ -1,0 +1,102 @@
+version: '3.8'
+
+# Debug/Development Farm Management System - Docker Compose
+# This version uses simpler configurations for easier debugging
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:6.0
+    container_name: farm_mongodb_debug
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: farmpass123
+      MONGO_INITDB_DATABASE: farmmanagement
+    volumes:
+      - mongodb_debug_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - farm_network
+    command: mongod --noauth --bind_ip_all
+
+  # Redis for Caching and Sessions
+  redis:
+    image: redis:7-alpine
+    container_name: farm_redis_debug
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_debug_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - farm_network
+
+  # Backend API Server
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: farm_backend_debug
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      MONGODB_URI: mongodb://mongodb:27017/farmmanagement
+      JWT_SECRET: debug-jwt-secret-key
+      JWT_EXPIRE: 7d
+      CLIENT_URL: http://localhost:3000
+      MOBILE_URL: http://localhost:19006
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    ports:
+      - "5000:5000"
+    networks:
+      - farm_network
+    depends_on:
+      - mongodb
+      - redis
+    command: npm run dev
+
+  # Web Frontend - Development Mode
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.simple
+    container_name: farm_web_debug
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      REACT_APP_API_URL: http://localhost:5000
+      REACT_APP_ENVIRONMENT: development
+      WATCHPACK_POLLING: true
+      FAST_REFRESH: true
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+      - /app/build
+    ports:
+      - "3000:3000"
+    networks:
+      - farm_network
+    depends_on:
+      - backend
+    command: npm start
+    stdin_open: true
+    tty: true
+
+volumes:
+  mongodb_debug_data:
+    driver: local
+  redis_debug_data:
+    driver: local
+
+networks:
+  farm_network:
+    driver: bridge 
