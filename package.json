@@ -1,0 +1,19 @@
+{
+  "name": "farm-management-system",
+  "version": "1.0.0",
+  "description": "A comprehensive farm management system for goats, cattle, and other livestock",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run backend\" \"npm run mobile\" \"npm run web\"",
+    "backend": "cd backend && npm run dev",
+    "mobile": "cd mobile && npm start",
+    "web": "cd web && npm start",
+    "install-all": "npm install && cd backend && npm install && cd ../mobile && npm install && cd ../web && npm install"
+  },
+  "keywords": ["farm", "management", "livestock", "mobile", "react-native", "expo"],
+  "author": "Farm Management Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 

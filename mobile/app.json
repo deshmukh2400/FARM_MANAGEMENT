@@ -1,0 +1,75 @@
+{
+  "expo": {
+    "name": "Farm Management",
+    "slug": "farm-management",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.svg",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.svg",
+      "resizeMode": "cover",
+      "backgroundColor": "#4CAF50"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.farmmanagement.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app needs access to camera to take photos of animals.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to photo library to select animal photos.",
+        "NSLocationWhenInUseUsageDescription": "This app needs location access to show nearby farms and animals."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.svg",
+        "backgroundColor": "#4CAF50"
+      },
+      "package": "com.farmmanagement.app",
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Farm Management to access your camera to take photos of your animals."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Farm Management to use your location to find nearby farms and services."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./assets/notification-sound.wav"
+          ]
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "farm-management-app"
+      }
+    }
+  }
+} 

@@ -1,0 +1,30 @@
+{
+  "short_name": "Farm Manager",
+  "name": "Farm Management System",
+  "description": "Comprehensive farm management system for livestock farmers",
+  "icons": [
+    {
+      "src": "assets/images/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    },
+    {
+      "src": "assets/images/logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192"
+    },
+    {
+      "src": "assets/images/logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#2E7D32",
+  "background_color": "#4CAF50",
+  "categories": ["productivity", "business", "utilities"],
+  "lang": "en",
+  "dir": "ltr",
+  "orientation": "portrait-primary"
+} 
