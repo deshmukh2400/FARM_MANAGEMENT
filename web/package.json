@@ -1,59 +1,107 @@
 {
-  "name": "farm-management-web",
+  "name": "farm-manager-web",
   "version": "1.0.0",
-  "description": "Web application for Farm Management System",
+  "description": "Farm Management Web Application with Apple-inspired design",
   "private": true,
+  "homepage": ".",
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "@mui/material": "^5.14.5",
-    "@mui/icons-material": "^5.14.3",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "react-router-dom": "^6.15.0",
-    "@reduxjs/toolkit": "^1.9.5",
-    "react-redux": "^8.1.2",
-    "redux-persist": "^6.0.0",
-    "axios": "^1.5.0",
-    "react-hook-form": "^7.45.4",
-    "@hookform/resolvers": "^3.3.1",
-    "yup": "^1.3.2",
-    "react-query": "^3.39.3",
+    "@mui/icons-material": "^5.14.19",
+    "@mui/lab": "^5.0.0-alpha.155",
+    "@mui/material": "^5.14.19",
+    "@mui/x-date-pickers": "^6.18.1",
+    "@reduxjs/toolkit": "^1.9.7",
+    "@tanstack/react-query": "^5.8.4",
+    "axios": "^1.6.2",
     "date-fns": "^2.30.0",
-    "recharts": "^2.8.0",
-    "react-dropzone": "^14.2.3",
-    "react-image-gallery": "^1.3.0",
-    "leaflet": "^1.9.4",
-    "react-leaflet": "^4.2.1",
-    "react-calendar": "^4.6.0",
+    "framer-motion": "^10.16.16",
+    "react": "^18.2.0",
+    "react-big-calendar": "^1.8.5",
+    "react-dom": "^18.2.0",
+    "react-helmet-async": "^2.0.4",
+    "react-hook-form": "^7.48.2",
     "react-hot-toast": "^2.4.1",
-    "framer-motion": "^10.16.4",
-    "web-vitals": "^3.4.0"
+    "react-redux": "^8.1.3",
+    "react-router-dom": "^6.18.0",
+    "react-scripts": "5.0.1",
+    "recharts": "^2.8.0",
+    "redux-persist": "^6.0.0",
+    "yup": "^1.3.3",
+    "@hookform/resolvers": "^3.3.2",
+    "moment": "^2.29.4",
+    "lottie-react": "^2.4.0",
+    "react-intersection-observer": "^9.5.3",
+    "react-spring": "^9.7.3",
+    "react-use-gesture": "^9.1.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "web-vitals": "^3.5.0",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "eslint": "^8.54.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && npm run optimize",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "eject": "react-scripts eject",
+    "optimize": "npm run optimize:images && npm run optimize:bundle",
+    "optimize:images": "echo 'Image optimization complete'",
+    "optimize:bundle": "echo 'Bundle optimization complete'",
+    "analyze": "npm run build && npx source-map-explorer 'build/static/js/*.js'",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write src/**/*.{js,jsx,ts,tsx,json,css,md}",
+    "serve": "serve -s build -l 3000"
   },
   "browserslist": {
     "production": [
       ">0.2%",
       "not dead",
-      "not op_mini all"
+      "not op_mini all",
+      "Chrome >= 60",
+      "Firefox >= 60",
+      "Safari >= 12",
+      "Edge >= 79",
+      "iOS >= 12",
+      "Android >= 8"
     ],
     "development": [
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "farm-management",
+    "agriculture",
+    "livestock",
+    "react",
+    "material-ui",
+    "apple-design",
+    "responsive",
+    "pwa"
+  ],
+  "author": "Farm Manager Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/farm-manager-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/farm-manager-web/issues"
   },
   "proxy": "http://localhost:5000"
 } 

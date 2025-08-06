@@ -1,1 +1,57 @@
- 
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <!-- Main gradient -->
+    <linearGradient id="iconGradient-mobile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E88E5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#26A69A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Inner gradient -->
+    <radialGradient id="innerIconGradient-mobile" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#E3F2FD;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#BBDEFB;stop-opacity:0.6" />
+    </radialGradient>
+    
+    <!-- Text gradient -->
+    <linearGradient id="textIconGradient-mobile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D47A1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1B5E20;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#iconGradient-mobile)" stroke="#0D47A1" stroke-width="2"/>
+  
+  <!-- Inner circle -->
+  <circle cx="50" cy="50" r="40" fill="url(#innerIconGradient-mobile)" stroke="#26A69A" stroke-width="1"/>
+  
+  <!-- Simplified Farm Building -->
+  <g transform="translate(50,58)">
+    <path d="M-18 5 L0 -12 L18 5 L18 18 L-18 18 Z" fill="#FF6B35" stroke="#D84315" stroke-width="1"/>
+    <path d="M-18 5 L0 -12 L18 5 L12 5 L0 -6 L-12 5 Z" fill="#FF8A65"/>
+    <!-- Door -->
+    <rect x="-6" y="8" width="12" height="10" rx="1" fill="#3E2723"/>
+    <circle cx="3" cy="13" r="1" fill="#FFC107"/>
+    <!-- Silo -->
+    <ellipse cx="22" cy="13" rx="4" ry="10" fill="#546E7A"/>
+    <ellipse cx="22" cy="3" rx="4" ry="2" fill="#78909C"/>
+  </g>
+  
+  <!-- FM Initials -->
+  <g transform="translate(50,25)">
+    <!-- F -->
+    <path d="M-12 -8 L-12 8 M-12 -8 L-5 -8 M-12 0 L-7 0" stroke="url(#textIconGradient-mobile)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <!-- M -->
+    <path d="M3 8 L3 -8 L8 -3 L13 -8 L13 8" stroke="url(#textIconGradient-mobile)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  
+  <!-- Animals (simplified dots) -->
+  <circle cx="20" cy="75" r="3" fill="#4CAF50"/>
+  <circle cx="80" cy="75" r="3" fill="#2E7D32"/>
+  
+  <!-- Tech element -->
+  <rect x="75" y="15" width="8" height="6" rx="1" fill="#1E88E5" opacity="0.8"/>
+  <circle cx="79" cy="18" r="1.5" fill="#E3F2FD"/>
+</svg> 

@@ -1,1 +1,131 @@
- 
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- Main background gradient -->
+    <linearGradient id="bgGradient-logo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1E88E5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#26A69A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Farm building gradient -->
+    <linearGradient id="farmGradient-logo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D84315;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Text gradient -->
+    <linearGradient id="textGradient-logo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D47A1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1B5E20;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Animal gradient -->
+    <linearGradient id="animalGradient-logo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Inner circle gradient -->
+    <radialGradient id="innerGradient-logo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#E3F2FD;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#BBDEFB;stop-opacity:0.7" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Outer ring -->
+  <circle cx="100" cy="100" r="98" fill="url(#bgGradient-logo)" stroke="#0D47A1" stroke-width="2"/>
+  
+  <!-- Inner background -->
+  <circle cx="100" cy="100" r="85" fill="url(#innerGradient-logo)" stroke="#26A69A" stroke-width="1"/>
+  
+  <!-- Modern farm building -->
+  <g transform="translate(100,110)">
+    <!-- Main barn structure -->
+    <path d="M-35 10 L0 -25 L35 10 L35 35 L-35 35 Z" fill="url(#farmGradient-logo)" stroke="#BF360C" stroke-width="1.5"/>
+    <!-- Roof highlight -->
+    <path d="M-35 10 L0 -25 L35 10 L25 10 L0 -15 L-25 10 Z" fill="#FF8A65" opacity="0.8"/>
+    <!-- Building shadow -->
+    <path d="M30 10 L35 10 L35 35 L30 35 Z" fill="#BF360C" opacity="0.6"/>
+    
+    <!-- Modern barn door -->
+    <rect x="-12" y="15" width="24" height="20" rx="2" fill="#3E2723" stroke="#1A1A1A" stroke-width="1"/>
+    <rect x="-10" y="17" width="8" height="16" rx="1" fill="#5D4037"/>
+    <rect x="2" y="17" width="8" height="16" rx="1" fill="#5D4037"/>
+    <circle cx="-6" cy="25" r="1.5" fill="#FFC107"/>
+    <circle cx="6" cy="25" r="1.5" fill="#FFC107"/>
+    
+    <!-- Windows -->
+    <rect x="-25" y="18" width="8" height="8" rx="1" fill="#1976D2" stroke="#0D47A1" stroke-width="0.5"/>
+    <path d="M-25 22 L-17 22 M-21 18 L-21 26" stroke="#E3F2FD" stroke-width="0.5"/>
+    <rect x="17" y="18" width="8" height="8" rx="1" fill="#1976D2" stroke="#0D47A1" stroke-width="0.5"/>
+    <path d="M17 22 L25 22 M21 18 L21 26" stroke="#E3F2FD" stroke-width="0.5"/>
+    
+    <!-- Silo -->
+    <ellipse cx="45" cy="25" rx="8" ry="20" fill="#546E7A" stroke="#37474F" stroke-width="1"/>
+    <ellipse cx="45" cy="5" rx="8" ry="4" fill="#78909C"/>
+    <rect x="41" y="20" width="8" height="3" fill="#37474F"/>
+  </g>
+  
+  <!-- Enhanced cattle silhouette -->
+  <g transform="translate(45,150)">
+    <path d="M0 0 Q-8 -5 -6 -12 Q-4 -15 0 -14 Q4 -15 8 -12 Q12 -14 18 -12 Q22 -10 20 -6 Q18 -2 15 0 Q12 2 8 2 Q4 4 0 2 Q-4 2 0 0 Z" fill="url(#animalGradient-logo)" stroke="#1B5E20" stroke-width="0.5"/>
+    <!-- Body details -->
+    <ellipse cx="8" cy="-6" rx="12" ry="6" fill="url(#animalGradient-logo)"/>
+    <!-- Legs -->
+    <rect x="2" y="0" width="2" height="8" fill="#2E7D32"/>
+    <rect x="6" y="0" width="2" height="8" fill="#2E7D32"/>
+    <rect x="10" y="0" width="2" height="8" fill="#2E7D32"/>
+    <rect x="14" y="0" width="2" height="8" fill="#2E7D32"/>
+    <!-- Head details -->
+    <circle cx="18" cy="-8" r="1.5" fill="#1B5E20"/>
+    <path d="M16 -12 Q18 -14 20 -12" stroke="#1B5E20" stroke-width="1" fill="none"/>
+    <path d="M14 -12 Q16 -14 18 -12" stroke="#1B5E20" stroke-width="1" fill="none"/>
+  </g>
+  
+  <!-- Enhanced goat silhouette -->
+  <g transform="translate(155,148)">
+    <path d="M0 0 Q-6 -3 -4 -10 Q-2 -12 2 -11 Q6 -12 10 -10 Q14 -11 16 -8 Q18 -6 16 -3 Q14 -1 10 0 Q6 1 2 0 Q-2 1 0 0 Z" fill="url(#animalGradient-logo)" stroke="#1B5E20" stroke-width="0.5"/>
+    <!-- Body -->
+    <ellipse cx="8" cy="-5" rx="8" ry="4" fill="url(#animalGradient-logo)"/>
+    <!-- Legs -->
+    <rect x="3" y="0" width="1.5" height="6" fill="#2E7D32"/>
+    <rect x="6" y="0" width="1.5" height="6" fill="#2E7D32"/>
+    <rect x="9" y="0" width="1.5" height="6" fill="#2E7D32"/>
+    <rect x="12" y="0" width="1.5" height="6" fill="#2E7D32"/>
+    <!-- Goat horns -->
+    <path d="M14 -10 Q16 -12 18 -10" stroke="#1B5E20" stroke-width="1" fill="none"/>
+    <path d="M12 -10 Q14 -12 16 -10" stroke="#1B5E20" stroke-width="1" fill="none"/>
+    <!-- Beard -->
+    <path d="M16 -6 Q18 -4 17 -2" stroke="#1B5E20" stroke-width="1" fill="none"/>
+    <circle cx="14" cy="-7" r="1" fill="#1B5E20"/>
+  </g>
+  
+  <!-- Ground/grass -->
+  <ellipse cx="100" cy="170" rx="75" ry="6" fill="#4CAF50" opacity="0.6"/>
+  <ellipse cx="100" cy="172" rx="70" ry="4" fill="#66BB6A" opacity="0.8"/>
+  
+  <!-- FM Initials in modern style -->
+  <g transform="translate(100,45)">
+    <!-- F letter -->
+    <path d="M-25 -15 L-25 15 M-25 -15 L-10 -15 M-25 0 L-15 0" stroke="url(#textGradient-logo)" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <!-- M letter -->
+    <path d="M5 15 L5 -15 L15 -5 L25 -15 L25 15" stroke="url(#textGradient-logo)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  
+  <!-- Subtitle -->
+  <text x="100" y="75" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" font-weight="600" fill="url(#textGradient-logo)">FARM MANAGER</text>
+  
+  <!-- Decorative elements -->
+  <circle cx="25" cy="25" r="3" fill="#26A69A" opacity="0.7"/>
+  <circle cx="175" cy="25" r="3" fill="#1E88E5" opacity="0.7"/>
+  <circle cx="25" cy="175" r="3" fill="#4CAF50" opacity="0.7"/>
+  <circle cx="175" cy="175" r="3" fill="#2E7D32" opacity="0.7"/>
+  
+  <!-- Modern tech elements -->
+  <g transform="translate(170,40)">
+    <rect x="0" y="0" width="12" height="8" rx="2" fill="#1E88E5" opacity="0.8"/>
+    <circle cx="6" cy="4" r="2" fill="#E3F2FD"/>
+    <circle cx="6" cy="4" r="1" fill="#1E88E5"/>
+  </g>
+</svg> 

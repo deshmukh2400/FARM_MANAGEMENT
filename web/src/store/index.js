@@ -1,20 +1,26 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import storage from 'redux-persist/lib/storage';
 import { combineReducers } from '@reduxjs/toolkit';
 
 import authSlice from './slices/authSlice';
-import enhancementsSlice from './slices/enhancementsSlice';
+import animalsSlice from './slices/animalsSlice';
+import schedulesSlice from './slices/schedulesSlice';
+import inventorySlice from './slices/inventorySlice';
+import marketplaceSlice from './slices/marketplaceSlice';
 
 const persistConfig = {
   key: 'root',
-  storage: AsyncStorage,
+  storage,
   whitelist: ['auth'], // Only persist auth state
 };
 
 const rootReducer = combineReducers({
   auth: authSlice,
-  enhancements: enhancementsSlice,
+  animals: animalsSlice,
+  schedules: schedulesSlice,
+  inventory: inventorySlice,
+  marketplace: marketplaceSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -29,4 +35,7 @@ export const store = configureStore({
     }),
 });
 
-export const persistor = persistStore(store); 
+export const persistor = persistStore(store);
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch; 
