@@ -174,4 +174,8 @@ const inventorySlice = createSlice({
 });
 
 export const { clearError, setFilters, updateStats } = inventorySlice.actions;
+
+// Export alias for backward compatibility
+export const addInventoryItem = createInventoryItem;
+
 export default inventorySlice.reducer; 

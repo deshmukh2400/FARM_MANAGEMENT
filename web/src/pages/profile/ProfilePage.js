@@ -40,7 +40,7 @@ import {
   Help,
   Logout,
   PhotoCamera,
-  Farm,
+  Agriculture,
   LocationOn,
   Phone,
   Email,
@@ -204,7 +204,7 @@ const ProfilePage = () => {
             </Typography>
             
             <Chip
-              icon={<Farm />}
+                              icon={<Agriculture />}
               label={user?.farmName || 'Farm Name Not Set'}
               color="primary"
               variant="outlined"
@@ -333,7 +333,7 @@ const ProfilePage = () => {
                   onChange={(e) => setProfileData({...profileData, farmName: e.target.value})}
                   disabled={!editMode}
                   InputProps={{
-                    startAdornment: <Farm sx={{ mr: 1, color: 'text.secondary' }} />,
+                                          startAdornment: <Agriculture sx={{ mr: 1, color: 'text.secondary' }} />,
                   }}
                 />
               </Grid>

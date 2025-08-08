@@ -8,10 +8,15 @@ const rateLimit = require('express-rate-limit');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const { sanitizeInput } = require('./middleware/inputSanitizer');
+const { swaggerUi, specs } = require('./docs/swagger');
 require('dotenv').config();
 
 const app = express();
 const server = createServer(app);
+
+// Trust proxy for rate limiting and security headers
+app.set('trust proxy', 1);
+
 const io = new Server(server, {
   cors: {
     origin: [process.env.CLIENT_URL, process.env.MOBILE_URL],
@@ -135,6 +140,12 @@ app.get('/health', (req, res) => {
     environment: process.env.NODE_ENV 
   });
 });
+
+// API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Farm Management API Documentation'
+}));
 
 // API Routes
 app.use('/api/auth', authRoutes);

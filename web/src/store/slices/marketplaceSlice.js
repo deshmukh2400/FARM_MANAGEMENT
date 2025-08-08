@@ -251,4 +251,8 @@ export const {
   clearInquiryStatus 
 } = marketplaceSlice.actions;
 
+// Export aliases for backward compatibility
+export const fetchMarketplace = fetchListings;
+export const createInquiry = sendInquiry;
+
 export default marketplaceSlice.reducer; 

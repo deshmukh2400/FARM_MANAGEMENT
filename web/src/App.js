@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ThemeProvider, CssBaseline, GlobalStyles } from '@mui/material';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -11,6 +11,7 @@ import { store, persistor } from './store';
 import AppRoutes from './routes/AppRoutes';
 import LoadingScreen from './components/LoadingScreen';
 import appleTheme from './theme/appleTheme';
+import { loadUser } from './store/slices/authSlice';
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -233,7 +234,15 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-function App() {
+// App content component that initializes user authentication
+function AppContent() {
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    // Initialize user authentication on app startup
+    dispatch(loadUser());
+  }, [dispatch]);
+
   // Add viewport meta tag for better mobile experience
   React.useEffect(() => {
     const viewport = document.querySelector('meta[name="viewport"]');
@@ -246,51 +255,57 @@ function App() {
   }, []);
 
   return (
+    <ThemeProvider theme={appleTheme}>
+      <CssBaseline />
+      {globalStyles}
+      <Router>
+        <div className="fade-in">
+          <AppRoutes />
+        </div>
+        {/* Toast notifications with Apple-style positioning */}
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: 'rgba(255, 255, 255, 0.9)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              border: '1px solid rgba(0, 0, 0, 0.1)',
+              borderRadius: '12px',
+              color: appleTheme.palette.text.primary,
+              fontFamily: appleTheme.typography.fontFamily,
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+            },
+            success: {
+              iconTheme: {
+                primary: appleTheme.palette.success.main,
+                secondary: '#ffffff',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: appleTheme.palette.error.main,
+                secondary: '#ffffff',
+              },
+            },
+          }}
+        />
+      </Router>
+    </ThemeProvider>
+  );
+}
+
+function App() {
+  return (
     <ErrorBoundary>
       <HelmetProvider>
         <Provider store={store}>
           <PersistGate loading={<LoadingScreen />} persistor={persistor}>
             <QueryClientProvider client={queryClient}>
-              <ThemeProvider theme={appleTheme}>
-                <CssBaseline />
-                {globalStyles}
-                <Router>
-                  <div className="fade-in">
-                    <AppRoutes />
-                  </div>
-                  {/* Toast notifications with Apple-style positioning */}
-                  <Toaster
-                    position="top-center"
-                    toastOptions={{
-                      duration: 4000,
-                      style: {
-                        background: 'rgba(255, 255, 255, 0.9)',
-                        backdropFilter: 'blur(20px)',
-                        WebkitBackdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(0, 0, 0, 0.1)',
-                        borderRadius: '12px',
-                        color: appleTheme.palette.text.primary,
-                        fontFamily: appleTheme.typography.fontFamily,
-                        fontSize: '0.875rem',
-                        fontWeight: 500,
-                        boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
-                      },
-                      success: {
-                        iconTheme: {
-                          primary: appleTheme.palette.success.main,
-                          secondary: '#ffffff',
-                        },
-                      },
-                      error: {
-                        iconTheme: {
-                          primary: appleTheme.palette.error.main,
-                          secondary: '#ffffff',
-                        },
-                      },
-                    }}
-                  />
-                </Router>
-              </ThemeProvider>
+              <AppContent />
             </QueryClientProvider>
           </PersistGate>
         </Provider>

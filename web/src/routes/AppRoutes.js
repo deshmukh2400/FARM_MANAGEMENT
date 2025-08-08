@@ -65,8 +65,26 @@ const PublicRoute = ({ children }) => {
 };
 
 const AppRoutes = () => {
+  const { isAuthenticated, isLoading } = useSelector((state) => state.auth);
+
+  // Handle root route based on authentication state
+  const RootRoute = () => {
+    if (isLoading) {
+      return <LoadingScreen />;
+    }
+    
+    if (isAuthenticated) {
+      return <Navigate to="/dashboard" replace />;
+    }
+    
+    return <Navigate to="/login" replace />;
+  };
+
   return (
     <Routes>
+      {/* Root Route */}
+      <Route path="/" element={<RootRoute />} />
+
       {/* Public Routes */}
       <Route path="/login" element={
         <PublicRoute>

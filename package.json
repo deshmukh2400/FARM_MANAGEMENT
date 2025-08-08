@@ -8,12 +8,53 @@
     "backend": "cd backend && npm run dev",
     "mobile": "cd mobile && npm start",
     "web": "cd web && npm start",
-    "install-all": "npm install && cd backend && npm install && cd ../mobile && npm install && cd ../web && npm install"
+    "install-all": "npm install && cd backend && npm install && cd ../mobile && npm install && cd ../web && npm install",
+    "test": "npm run test:backend && npm run test:web",
+    "test:backend": "cd backend && npm test",
+    "test:web": "cd web && npm test",
+    "test:watch": "concurrently \"npm run test:backend:watch\" \"npm run test:web:watch\"",
+    "test:backend:watch": "cd backend && npm run test:watch",
+    "test:web:watch": "cd web && npm run test:watch",
+    "test:coverage": "npm run test:backend:coverage && npm run test:web:coverage",
+    "test:backend:coverage": "cd backend && npm run test:coverage",
+    "test:web:coverage": "cd web && npm run test:coverage",
+    "test:unit": "cd backend && npm run test:unit",
+    "test:integration": "cd backend && npm run test:integration",
+    "lint": "npm run lint:backend && npm run lint:web",
+    "lint:backend": "cd backend && npm run lint || echo 'Backend linting not configured'",
+    "lint:web": "cd web && npm run lint",
+    "lint:fix": "npm run lint:backend:fix && npm run lint:web:fix",
+    "lint:backend:fix": "cd backend && npm run lint:fix || echo 'Backend linting not configured'",
+    "lint:web:fix": "cd web && npm run lint:fix",
+    "format": "npm run format:web",
+    "format:web": "cd web && npm run format",
+    "build": "npm run build:web",
+    "build:web": "cd web && npm run build",
+    "build:prod": "npm run build:web:prod",
+    "build:web:prod": "cd web && npm run build:prod",
+    "update-all": "npm update && cd backend && npm run update-deps && cd ../web && npm run update-deps && cd ../mobile && npm run update-deps",
+    "audit-all": "npm audit && cd backend && npm run security-check && cd ../web && npm audit && cd ../mobile && npm audit",
+    "clean": "npm run clean:backend && npm run clean:web && npm run clean:mobile",
+    "clean:backend": "cd backend && rm -rf node_modules package-lock.json",
+    "clean:web": "cd web && rm -rf node_modules package-lock.json build",
+    "clean:mobile": "cd mobile && rm -rf node_modules package-lock.json",
+    "fresh-install": "npm run clean && npm run install-all"
   },
   "keywords": ["farm", "management", "livestock", "mobile", "react-native", "expo"],
   "author": "Farm Management Team",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "workspaces": {
+    "packages": [
+      "backend",
+      "web",
+      "mobile"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 } 
